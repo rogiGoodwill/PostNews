@@ -1,0 +1,92 @@
+from news.models import *
+user_Sasha = User.objects.create_user(username='Саша')
+user_Masha = User.objects.create_user(username='Маша')
+author_Sasha = Author.objects.create(author = user_Sasha)
+author_Masha = Author.objects.create(author = user_Masha) 
+
+cat_Sport = Category.objects.create(cat_name = 'Спорт')
+cat_Art = Category.objects.create(cat_name = 'Искусство')
+cat_Politics = Category.objects.create(cat_name = 'Политика')
+cat_Nature = Category.objects.create(cat_name = 'Природа')
+
+article_Sport = Post.objects.create(author = author_Sasha, post_type='AR')
+article_Art = Post.objects.create(author = author_Sasha, post_type='AR')
+news_Politics = Post.objects.create(author = author_Masha, post_type='NW')
+
+article_Sport.title = 'Большая и содержательная статья о спорте'
+article_Sport.text = 'Большая и содержательная статья о спорте. Очень монго текста о спорте'
+article_Sport.save()
+article_Art.title = 'Статья о природе'
+article_Art.text = 'Большая статья о природе'
+article_Art.save()
+news_Politics.title = "Скучная новость о политике"
+news_Politics.text = "Что-то скучное о политике"
+news_Politics.save()
+article_Sport.rating = 90
+article_Sport.save()
+article_Art.rating = 95
+article_Art.save()
+news_Politics.rating = 70
+news_Politics.save()
+
+PostCategory.objects.create(post = article_Sport, category=cat_Sport)
+
+PostCategory.objects.create(post = article_Sport, category=cat_Art)
+
+PostCategory.objects.create(post = article_Art, category=cat_Art)
+
+
+PostCategory.objects.create(post = article_Art, category=cat_Nature)
+
+PostCategory.objects.create(post = news_Politics, category=cat_Politics)
+
+PostCategory.objects.create(post = news_Politics, category=cat_Art)
+
+
+
+comment_1 = Comment.objects.create(post = article_Sport, user = user_Sasha)
+comment_1.comment_txt = "Мы всех победили!"
+comment_1.save()
+comment_2 = Comment.objects.create(post = article_Sport, user = user_Masha)
+comment_2.comment_txt = "Конечно победили)"
+comment_2.save()
+comment_3 = Comment.objects.create(post = article_Art, user = user_Masha)
+comment_3.comment_txt = "Как красиво!"
+comment_3.save()
+comment_4 = Comment.objects.create(post = article_Art, user = user_Sasha)
+comment_4.comment_txt = "Очень!)"
+comment_4.save()
+comment_5 = Comment.objects.create(post = news_Politics, user = user_Sasha)
+comment_5.comment_txt = "Как скучно("
+comment_5.save()
+comment_1.rating = 80
+comment_2.rating = 90
+comment_2.rating = 75
+comment_2.rating = 90
+comment_3.rating = 75
+comment_4.rating = 95
+comment_5.rating = 20
+comment_1.save()
+comment_2.save()
+comment_3.save()
+comment_4.save()
+comment_5.save()
+
+
+news_Politics.dislike()
+
+news_Politics.save()
+article_Art.like()
+
+article_Art.save()
+article_Sport.like()
+
+article_Sport.save()
+
+author_Sasha.update_rating()
+author_Masha.update_rating()
+Author.objects.order_by('-rating').values('author__username', 'rating')[0]
+Post.objects.order_by('-rating').values('time_create_post', 'author__author__username', 'rating', 'title')[0]
+best_post_id = Post.objects.order_by('-rating').values('id')[0].get('id')
+Post.objects.get(id=best_post_id).preview()
+Comment.objects.values('time_create_comment', 'user__username', 'rating', 'comment_txt')

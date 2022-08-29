@@ -1,0 +1,23 @@
+{% extends 'default.html' %}
+
+{% load censor_filter %}
+
+{% load static %}
+
+{% block title %}Новости{% endblock title %}
+
+{% block content %}
+    {% if news %}
+        <h1>Всего новостей: {{ news|length }}</h1>
+        <hr>
+        <hr>
+        {% for el in news %}
+            <a href="{% url 'news-detail' el.pk %}"><h3>{{ el.title }}</h3></a>
+            <h3>Дата публикации: {{ el.time_create_post|date:'d M Y' }}</h3>
+            <p>{{ el.text|truncatechars:50|censor_filter}}</p>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <h2>Новостей нет</h2>
+    {% endif %}
+{% endblock content %}

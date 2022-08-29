@@ -1,0 +1,17 @@
+{% extends 'default.html' %}
+
+{% load censor_filter %}
+
+{% load static %}
+
+{% block title %}Информация о новости{% endblock title %}
+
+{% block content %}
+
+
+    <h3>{{ news_detail.title }}</h3>
+    <h3>Дата публикации: {{ news_detail.time_create_post|date:'d M Y h:m' }}</h3>
+    <p>{{ news_detail.text|censor_filter}}</p>
+    <hr>
+
+{% endblock content %}
