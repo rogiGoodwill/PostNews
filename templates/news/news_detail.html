@@ -13,5 +13,6 @@
     <h3>Дата публикации: {{ news_detail.time_create_post|date:'d M Y h:m' }}</h3>
     <p>{{ news_detail.text|censor_filter}}</p>
     <hr>
-
+    <a href="{% url 'news-edit' news_detail.pk %}"><u>Редактировать</u></a>
+    <a href="{% url 'news-delete' news_detail.pk %}"><u>Удалить</u></a>
 {% endblock content %}

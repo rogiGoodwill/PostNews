@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Author(models.Model):
+    '''
+    Таблица, содержащая объекты всех авторов.
+    '''
     author = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
 
@@ -17,9 +20,13 @@ class Author(models.Model):
         self.save()
 
     def __str__(self):
-        return str(self.author)
+        return str(self.author.username)
 
 class Category(models.Model):
+    '''
+    Таблица категорий новостей/статей — темы, которые они отражают (спорт, политика, образование и т. д.).
+    '''
+
     cat_name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
@@ -27,6 +34,11 @@ class Category(models.Model):
 
 
 class Post(models.Model):
+    '''
+    Таблица содержит в себе статьи и новости, которые создают пользователи.
+    Каждый объект может иметь одну или несколько категорий.
+    '''
+
     article = 'AR'
     news = 'NW'
 
@@ -35,7 +47,7 @@ class Post(models.Model):
         (news, 'Новость'),
     ]
 
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, )
     post_type = models.CharField(max_length=2, choices=POST_LIST, default=article)
     time_create_post = models.DateTimeField(auto_now_add=True)
     category = models.ManyToManyField(Category, through='PostCategory')
@@ -60,7 +72,15 @@ class Post(models.Model):
     def __str__(self):
         return str(self.title)
 
+    def get_absolute_url(self):
+        return f'/news/{self.pk}'
+
 class PostCategory(models.Model):
+    '''
+    Промежуточная модель для связи «многие ко многим»:
+    связь «один ко многим» с моделью Post;
+    связь «один ко многим» с моделью Category.
+    '''
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
@@ -68,6 +88,9 @@ class PostCategory(models.Model):
         return str(self.category) + str(self.post)
 
 class Comment(models.Model):
+    '''
+    Таблица комментариев
+    '''
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment_txt = models.TextField()

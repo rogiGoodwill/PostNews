@@ -1,0 +1,16 @@
+{% extends 'default.html' %}
+
+{% load censor_filter %}
+
+{% load static %}
+
+{% block title %}Добавить новость{% endblock title %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Добавить новость">
+</form>
+
+{% endblock content %}

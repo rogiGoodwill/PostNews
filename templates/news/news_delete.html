@@ -1,0 +1,17 @@
+{% extends 'default.html' %}
+
+{% load censor_filter %}
+
+{% load static %}
+
+{% block title %}Удалить новость{% endblock title %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <h3>Вы точно хотите удалить следующую запись:</h3>
+    <h4>{{ post.title }}</h4>
+    <input type="submit" value="Подтвердить удаление">
+</form>
+
+{% endblock content %}
