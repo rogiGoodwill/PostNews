@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import Sum
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django import forms
 
 
 # Create your models here.
@@ -109,3 +111,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.comment_txt)
+

@@ -25,6 +25,18 @@
                         <li class="nav-item"><a class="nav-link active" href="{% url 'news-search' %}">Найти</a></li>
                         <li class="nav-link active">|</li>
                         <li class="nav-item"><a class="nav-link active" href="{% url 'news-create' %}">Добавить новость</a></li>
+                        <li class="nav-link active">|</li>
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item"><a class="nav-link active" href="{% url 'account_logout' %}">Выйти</a></li>
+                            <li class="nav-link active">|</li>
+                            <li class="nav-item"><a class="nav-link active">Пользователь: {{request.user.username}}</a></li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link active" href="{% url 'account_login' %}">Войти</a></li>
+                        {% endif %}
+                        {% if is_not_author %}
+                            <li class="nav-link active">|</li>
+                            <li class="nav-item"><a class="nav-link active" href="{% url 'upgrade-to-author' %}">Стать автором</a></li>
+                        {% endif %}
 <!--                        <li class="nav-item dropdown">-->
 <!--                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>-->
 <!--                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">-->
