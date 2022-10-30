@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Новая статья!</title>
+</head>
+<body>
+    <h3>Здравствуй, {{ username }}. Новая статья в твоём любимом разделе!</h3>
+    <h4>{{ post_title }}</h4>
+    <h5>{{ post_text }}</h5>
+    <a href="{{ domain_url }}{% url 'news-detail' news_pk %}">Перейти к статье</a>
+Django version 4.1, using settings 'NewsPaper.settings'
+Django version 4.1, using settings 'NewsPaper.settings'
+</body>
+</html>

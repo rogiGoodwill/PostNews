@@ -1,10 +1,8 @@
 {% extends 'base.html' %}
 
-{% load censor_filter %}
-
 {% load static %}
 
-{% block title %}Информация о новости{% endblock title %}
+{% block title %}Вы подписались!{% endblock title %}
 
 {% block content %}
 
@@ -17,16 +15,8 @@
     <a href="{% url 'news-delete' news_detail.pk %}"><u>Удалить</u></a>
     <br>
     <br>
-
-
-    {% for cat in category %}
-
-            <p>Подписаться на категорию {{ cat.category.cat_name }}?</p>
-            <a href="{% url 'subscribe-category' cat.category_id %}">
-                <button>Подписаться</button>
-            </a>
-
-    {% endfor %}
-
+    {% if is_not_subscribe  %}
+        <a href="{% url 'subscribe-category' news_detail.pk %}"><h6>Подписаться на категорию: {{category}}</h6></a>
+    {% endif %}
 
 {% endblock content %}

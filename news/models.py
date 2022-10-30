@@ -30,10 +30,10 @@ class Category(models.Model):
     '''
 
     cat_name = models.CharField(max_length=255, unique=True)
+    subscribers = models.ManyToManyField(User, through='CategorySubscribers')
 
     def __str__(self):
         return str(self.cat_name)
-
 
 class Post(models.Model):
     '''
@@ -56,6 +56,8 @@ class Post(models.Model):
     title = models.CharField(max_length=255, default='Заголовок')
     text = models.TextField(default='Текст статьи/новости')
     rating = models.IntegerField(default=0)
+
+
 
     def like(self):
         self.rating += 1
@@ -112,3 +114,9 @@ class Comment(models.Model):
     def __str__(self):
         return str(self.comment_txt)
 
+class CategorySubscribers(models.Model):
+    """
+    Промежуточная таблица для связи m2m поля subscriber таблицы Post
+    """
+    subscribers = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
