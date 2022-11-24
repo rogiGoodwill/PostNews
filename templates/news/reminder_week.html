@@ -8,9 +8,12 @@
     <title>Новая статья!</title>
 </head>
 <body>
-    <h3>Здравствуй, {{ username }}. Новая статья в твоём любимом разделе!</h3>
-    <h4>{{ post_title }}</h4>
-    <h5>{{ post_text }}</h5>
-    <a href="http://{{ domain_url }}{% url 'news-detail' news_pk %}">Перейти к статье</a>
+    <h3>Здравствуй, {{ username }}. Новые статьи за неделю!</h3>
+
+    {% for post in subscriber_posts %}
+        <h4>{{ post.title }}</h4>
+        <h5>{{ post.text }}</h5>
+        <a href="http://{{ domain_url }}{% url 'news-detail' post.pk %}">Перейти к статье</a>
+    {% endfor %}
 </body>
 </html>

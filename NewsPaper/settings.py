@@ -43,10 +43,13 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'django_apscheduler',
 
     'news.apps.NewsConfig',
     'accounts.apps.AccountsConfig',
 ]
+#
+# DEFAULT_FROM_EMAIL = ''
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,18 +95,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    # },
 ]
 
 # Internationalization
@@ -160,8 +163,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = True
 ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
+
 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
@@ -172,3 +176,10 @@ EMAIL_HOST_USER = 'django.testemail@yandex.ru'
 EMAIL_HOST_PASSWORD = 'cyyvemskxtcoaypy'
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# формат даты, которую будет воспринимать наш задачник(вспоминаем урок по фильтрам)
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+# если задача не выполняется за 25 секунд, то она автоматически снимается,
+# можете поставить время побольше, но как правило, это сильно бьёт по производительности сервера
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds

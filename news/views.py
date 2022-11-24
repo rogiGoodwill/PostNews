@@ -1,14 +1,20 @@
+from datetime import date
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.db.models.aggregates import Count
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from .models import Post, PostCategory, User, CategorySubscribers, Category, Author
 from .filters import NewsFilter
 from .forms import NewsModelForm
 from django.conf import settings
+
+
 # Create your views here.
 
 class NewsListView(ListView):
@@ -71,60 +77,52 @@ class NewsCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def post(self, request, *args, **kwargs):
         author = request.POST.get('author')
-        post_type = request.POST.get('post_type')
-        category = request.POST.getlist('category')
-        title = request.POST.get('title')
-        text = request.POST.get('text')
-        rating = request.POST.get('rating')
-        new_object = Post.objects.create(
-            author_id=author,
-            post_type=post_type,
-            title=title,
-            text=text,
-            rating=rating
-        )
-        new_object.category.set(category)
-        self.sending_mail(request, new_object)
-        self.object = None
+        if self.is_limit_news(author):
+            return super().post(request, *args, **kwargs)
+        else:
+            return render(request, "news/news_over_limit.html")
 
-        return super().post(request, *args, **kwargs)
+    def is_limit_news(self, author):
+        today = date.today()
+        news_count = Post.objects.filter(
+            author=author, time_create_post__startswith=today).aggregate(Count("id")).get("id__count")
+        return news_count < 3
 
-    @staticmethod
-    def sending_mail(request, new_object):
-        post = new_object
-        post_title = post.title
-        post_text = post.text[:50] + '...'
-        category_id = post.category.values_list('id', flat=True)
-        news_pk = post.pk
-
-        for cat_id in category_id:
-
-            subscribers_list = list(
-                CategorySubscribers.objects.filter(category=cat_id).values_list('subscribers_id', flat=True))
-            for pk in subscribers_list:
-                subscriber = User.objects.get(pk=pk)
-                email = subscriber.email
-                username = subscriber.username
-
-                html_content = render_to_string(
-                    'news/reminder.html',
-                    context=
-                    {'post_title': post_title,
-                     'post_text': post_text,
-                     'username': username,
-                     'news_pk': news_pk,
-                     'domain_url': settings.DOMAIN,}
-                )
-
-                msg = EmailMultiAlternatives(
-                    subject=post_title,
-                    from_email='django.testemail@yandex.ru',
-                    to=[email,]
-                )
-
-                msg.attach_alternative(html_content, "text/html")
-                msg.send()
-
+    # @staticmethod
+    # def sending_mail(request, new_object):
+    #     post = new_object
+    #     post_title = post.title
+    #     post_text = post.text[:50] + '...'
+    #     category_id = post.category.values_list('id', flat=True)
+    #     news_pk = post.pk
+    #
+    #     for cat_id in category_id:
+    #
+    #         subscribers_list = list(
+    #             CategorySubscribers.objects.filter(category=cat_id).values_list('subscribers_id', flat=True))
+    #         for pk in subscribers_list:
+    #             subscriber = User.objects.get(pk=pk)
+    #             email = subscriber.email
+    #             username = subscriber.username
+    #
+    #             html_content = render_to_string(
+    #                 'news/reminder.html',
+    #                 context=
+    #                 {'post_title': post_title,
+    #                  'post_text': post_text,
+    #                  'username': username,
+    #                  'news_pk': news_pk,
+    #                  'domain_url': settings.DOMAIN,}
+    #             )
+    #
+    #             msg = EmailMultiAlternatives(
+    #                 subject=post_title,
+    #                 from_email='django.testemail@yandex.ru',
+    #                 to=[email,]
+    #             )
+    #
+    #             msg.attach_alternative(html_content, "text/html")
+    #             msg.send()
 
 
 class NewsUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
