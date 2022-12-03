@@ -13,6 +13,7 @@ from .models import Post, PostCategory, User, CategorySubscribers, Category, Aut
 from .filters import NewsFilter
 from .forms import NewsModelForm
 from django.conf import settings
+from django.core.cache import cache
 
 
 # Create your views here.
@@ -63,6 +64,18 @@ class NewDetailView(DetailView):
                 not_subscribe_category.append(cat)
         context['category'] = not_subscribe_category
         return context
+
+    def get_object(self, *args, **kwargs): # переопределяем метод получения объекта
+        obj = cache.get(f'news-{self.kwargs["pk"]}', None)
+
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'news-{self.kwargs["pk"]}', obj)
+
+        return obj
+
+
 
 
 class NewsCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):

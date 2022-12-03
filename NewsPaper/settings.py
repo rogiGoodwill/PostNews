@@ -183,3 +183,129 @@ APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 # если задача не выполняется за 25 секунд, то она автоматически снимается,
 # можете поставить время побольше, но как правило, это сильно бьёт по производительности сервера
 APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache_files'), # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    # formatters
+    'formatters': {
+        'debug': {
+            'format': '%(asctime)s %(levelname)s %(message)s'
+        },
+        'warning': {
+            'format':'%(asctime)s %(levelname)s %(message)s %(pathname)s %(exc_info)s'
+        },
+        'error_critical': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s'
+        },
+        'info_to_file': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(message)s'
+        },
+        'security': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(message)s'
+        },
+    },
+    # filters
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    # handlers
+    'handlers': {
+        'console_debug': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'debug'
+        },
+        'console_warning': {
+            'level': 'WARNING',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'warning'
+        },
+        'console_error_critical': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'error_critical'
+        },
+        'console_security': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'security'
+        },
+        'file_info': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.FileHandler',
+            'filename': 'general.log',
+            'formatter': 'info_to_file'
+        },
+        'file_error_critical': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.FileHandler',
+            'filename': 'errors.log',
+            'formatter': 'error_critical'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'error_critical'
+        }
+    },
+    # loggers
+    'loggers': {
+        'django': {
+            'handlers': [
+                'console_debug',
+                'console_warning',
+                'console_error_critical',
+                'file_info'
+            ],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+
+        'django.request': {
+            'handlers': ['file_error_critical', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['file_error_critical', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['file_error_critical', ],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db_backends': {
+            'handlers': ['file_error_critical', ],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['console_security', ],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    }
+}

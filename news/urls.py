@@ -8,8 +8,10 @@ from .views import (NewsListView,
                     upgrade_me,
                     subscribe_category,)
 
+from django.views.decorators.cache import cache_page
+
 urlpatterns = [
-    path('news/', NewsListView.as_view(), name='news'),
+    path('news/', cache_page(60)(NewsListView.as_view()), name='news'),
     path('news/<int:pk>', NewDetailView.as_view(), name='news-detail'),
     path('news/<int:pk>/edit/', NewsUpdateView.as_view(), name='news-edit'),
     path('news/<int:pk>/delete/', NewsDeleteView.as_view(), name='news-delete'),
